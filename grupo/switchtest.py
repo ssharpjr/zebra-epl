@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # 3 Position ON-ON-ON DPDT Switch.
-# Switch poles 1, 3, and 5 are on in position 1.
+# Position 1: Poles 5/6 AND 1/3 are closed.
+# Position 2: Poles 1/3 AND 4/6 are closed.
+# Position 3: Poles 2/3 AND 4/6 are closed.
+# Pole 4 is not used.
 
-import sys
+
 import RPi.GPIO as io
 
 
@@ -19,9 +22,8 @@ io.setup(sw2, io.IN, pull_up_down=io.PUD_DOWN)
 io.setup(sw3, io.IN, pull_up_down=io.PUD_DOWN)
 
 
-while True:
-
-    # Get switch state
+def setPos():
+    # Get switch position
     pos = ''
     if (io.input(sw1) and io.input(sw2)):
         pos = 1
@@ -29,11 +31,23 @@ while True:
         pos = 3
     elif (io.input(sw2)):
         pos = 2
+    print("Pos: %s" % pos)
+    return pos
 
-    if not pos:
-        print("Switch not detected")
-        io.cleanup()
-        sys.exit()
-    else:
-        print("pos: " + str(pos))
 
+def my_callback(channel):
+    setPos()
+
+
+pos = setPos()
+print("Pos: %s" % pos)
+
+    
+io.add_event_detect(sw1, io.BOTH, callback=my_callback, bouncetime=50)
+io.add_event_detect(sw2, io.BOTH, callback=my_callback, bouncetime=50)
+io.add_event_detect(sw3, io.BOTH, callback=my_callback, bouncetime=50)
+
+
+while True:
+    pass
+    
