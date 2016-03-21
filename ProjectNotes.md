@@ -83,6 +83,17 @@ The serial number is made of 3 variables:
 **B20,75,0,1,2,5,40,N,"12345678P403319PA"** - B = Barcode, HPos, VPos, Rot, BC Type, NBar Width, WBar Width, PHRC?, DATA
 P1 = P = Print, Number of labels
 
+# RPI Packages and Python Modules
+sudo apt-get install build-essential python-dev python-smbus python-pip git
+sudo pip install RPi.GPIO
+git clone https://github.com/adafruit/Adafruit_Python_charLCD.git
+sudo python setup.py install
+
+## RPI GPIO Pins Used
+- LCD = 6 pins
+- Button = 1 pin
+- Cam Switch = 3 pins
+
 ## Unanswered Questions:
 - Where will the device be mounted?
 - Where will the printer be placed?
