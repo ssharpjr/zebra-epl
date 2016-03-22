@@ -74,7 +74,7 @@ The serial number is made of 3 variables:
 - The program pauses 1 second.
 - Program returns to Idle status.
 
-## EPL Programming Notes
+## EPL Programming Notes:
 ##### EPL commands (*case sensitive*)
 **N** - New label (Delete buffer)
 **q406** - Sets label width in dots (203 dpi X 2 inch label = 406 dots)
@@ -83,11 +83,19 @@ The serial number is made of 3 variables:
 **B20,75,0,1,2,5,40,N,"12345678P403319PA"** - B = Barcode, HPos, VPos, Rot, BC Type, NBar Width, WBar Width, PHRC?, DATA
 P1 = P = Print, Number of labels
 
-# RPI Packages and Python Modules
+# RPI Packages and Python Modules:
 sudo apt-get install build-essential python-dev python-smbus python-pip git
 sudo pip install RPi.GPIO
 git clone https://github.com/adafruit/Adafruit_Python_charLCD.git
 sudo python setup.py install
+
+## LCD Library Notes:
+Adafruit_CharLCD Python3 compat:
+/usr/local/lib/python3.2/dist-packages/Adafruit_CharLCD/__init__.py
+ -from Adafruit_CharLCD import *
++from __future__ import absolute_import
++
++from Adafruit_CharLCD.Adafruit_CharLCD import *
 
 ## RPI GPIO Pins Used
 - LCD = 6 pins
