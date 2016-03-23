@@ -10,7 +10,7 @@ import sys
 from subprocess import check_output, STDOUT
 
 from time import time, strftime
-import RPi.GPIO as io
+# import RPi.GPIO as io
 
 # TODO: Setup RTC
 # TODO: Setup LCD
@@ -34,10 +34,10 @@ sw_pos2_pin = 24
 sw_pos3_pin = 25
 
 # Setup GPIO, pull-down resistors (False)
-io.setmode(io.BCM)
-io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
-io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
-io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
+# io.setmode(io.BCM)
+# io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
+# io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
+# io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
 
 
 def checkSwitch():
@@ -45,17 +45,17 @@ def checkSwitch():
 
 
 # Assign Part Number based on switch position
-def setPartNumber():
-    if (io.input(sw_pos1_pin)):
-        part_number = '403319PA'
-        part_description = 'F15 ACS LID LH BSE WRN TRI BLK'
-    elif (io.input(sw_pos2_pin)):
-        part_number = 'partno2'
-        part_description = 'partdesc2'
-    elif (io.input(sw_pos3_pin)):
-        part_number = 'partno3'
-        part_description = 'partdesc3'
-    return part_number, part_description
+# def setPartNumber():
+#     if (io.input(sw_pos1_pin)):
+#         part_number = '403319PA'
+#         part_description = 'F15 ACS LID LH BSE WRN TRI BLK'
+#     elif (io.input(sw_pos2_pin)):
+#         part_number = 'partno2'
+#         part_description = 'partdesc2'
+#     elif (io.input(sw_pos3_pin)):
+#         part_number = 'partno3'
+#         part_description = 'partdesc3'
+#     return part_number, part_description
 
 
 # Defaults for testing
@@ -84,8 +84,8 @@ def setSerialNumberTime(part_number):
 
 
 def printLabel():
-    printer = setPrinter()  # Testing
-    # printer = 'ZT230'
+    # printer = setPrinter()  # Testing
+    printer = 'ZT230'
     serial_number, localtime = setSerialNumberTime(part_number)
     label = """N
 q406
@@ -98,10 +98,18 @@ A20,145,0,1,1,1,N,"{lt}"
 P1""".format(pn=part_number, pd=part_description, sn=serial_number,
              lt=localtime)
 
-    # Testing.  Will be os.system(command)
-    print("lpr -P " + printer + " -o raw < " + label)
-    # cmd = "lpr -P " + printer + " -o raw < " + label
-    # os.system(cmd)
+    print("Writing file...")
+    with open('/tmp/label.epl', 'w') as f:
+        f.write(label)
+    print("EPL file written")
+
+    cmd = "lpr -P " + printer + " -o raw " + f
+    os.system(cmd)
+
+    try:
+        os.remove(f)
+    except OSError:
+        pass
 
 
 def main():
@@ -111,7 +119,7 @@ def main():
 
 def exitProgram():
     print("Exiting")
-    io.cleanup()  # Clean up GPIO
+    # io.cleanup()  # Clean up GPIO
     sys.exit()
 
 
