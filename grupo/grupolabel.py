@@ -9,7 +9,7 @@ import os
 import sys
 from subprocess import check_output, STDOUT
 
-from time import time, strftime
+from time import time, strftime, sleep
 # import RPi.GPIO as io
 
 # TODO: Setup RTC
@@ -84,8 +84,8 @@ def setSerialNumberTime(part_number):
 
 
 def printLabel():
-    # printer = setPrinter()  # Testing
-    printer = 'ZT230'
+    printer = setPrinter()  # Testing
+    # printer = 'ZT230'
     serial_number, localtime = setSerialNumberTime(part_number)
     label = """N
 q406
@@ -95,7 +95,8 @@ A20,50,0,1,1,1,N,"{pd}"
 B20,75,0,1,2,5,40,N,"{sn}"
 A20,120,0,1,1,1,N,"S/N {sn}"
 A20,145,0,1,1,1,N,"{lt}"
-P1""".format(pn=part_number, pd=part_description, sn=serial_number,
+P1
+""".format(pn=part_number, pd=part_description, sn=serial_number,
              lt=localtime)
 
     epl_file = '/tmp/label.epl'
@@ -103,6 +104,7 @@ P1""".format(pn=part_number, pd=part_description, sn=serial_number,
         f.write(label)
 
     cmd = "lpr -P " + printer + " -o raw " + epl_file
+    os.system('cat /tmp/label.epl')
     os.system(cmd)
 
     try:
