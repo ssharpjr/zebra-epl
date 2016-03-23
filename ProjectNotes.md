@@ -103,17 +103,29 @@ The serial number is made of 3 variables:
     P1 = P = Print, Number of labels
 
 
-## RPI Packages and Python Modules:
+## RPI Packages and Python Libraries:
 ```shell
- sudo apt-get install build-essential python3-dev python3-smbus python3-pip git
- sudo pip3.2 install RPi.GPIO
- git clone https://github.com/adafruit/Adafruit_Python_charLCD.git
- cd Adafruit_Python_charLCD
- (Make the changes in LCD Library Notes before installing)
- sudo python3 setup.py install
- cd ..
- git clone https://github.com/ssharpjr/zebra-epl.git
+# Install Packages
+sudo apt-get update
+sudo apt-get install -y build-essential python3-dev python3-smbus python3-pip git cups rpi-update
+
+# Get Label Software
+git clone https://github.com/ssharpjr/zebra-epl.git
+
+# Get LCD Libraries
+git clone https://github.com/adafruit/Adafruit_Python_charLCD.git
+cd Adafruit_Python_charLCD
+# (Make the changes in LCD Library Notes before installing)
+sudo python3 setup.py install
 ```
+**Setup CUPS and ZT230 Printer**  
+Instructions on 
+[HowToGeek.com](http://www.howtogeek.com/169679/how-to-add-a-printer-to-your-raspberry-pi-or-other-linux-computer/)  
+- Printer Name = ZT230
+- Printer Description = ZT230 RAW Printer
+- Make/Manufacturer = Raw
+- Model = Raw Queue (en)
+- Set as the Server Default Printer
 
 ## LCD Library Notes:
 ##### Adafruit_CharLCD Python3 compatibility:
