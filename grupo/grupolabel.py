@@ -98,16 +98,15 @@ A20,145,0,1,1,1,N,"{lt}"
 P1""".format(pn=part_number, pd=part_description, sn=serial_number,
              lt=localtime)
 
-    print("Writing file...")
-    with open('/tmp/label.epl', 'w') as f:
+    epl_file = '/tmp/label.epl'
+    with open(epl_file, 'w') as f:
         f.write(label)
-    print("EPL file written")
 
-    cmd = "lpr -P " + printer + " -o raw " + f
+    cmd = "lpr -P " + printer + " -o raw " + epl_file
     os.system(cmd)
 
     try:
-        os.remove(f)
+        os.remove(epl_file)
     except OSError:
         pass
 
