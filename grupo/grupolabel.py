@@ -5,6 +5,7 @@
 # Author: Stacey Sharp (github.com/ssharpjr)
 # Version: 2016-03-22
 
+import os
 import sys
 from subprocess import check_output, STDOUT
 
@@ -83,8 +84,8 @@ def setSerialNumberTime(part_number):
 
 
 def printLabel():
-    # printer = setPrinter()  # Testing
-    printer = 'ZT230'
+    printer = setPrinter()  # Testing
+    # printer = 'ZT230'
     serial_number, localtime = setSerialNumberTime(part_number)
     label = """N
 q406
@@ -99,6 +100,8 @@ P1""".format(pn=part_number, pd=part_description, sn=serial_number,
 
     # Testing.  Will be os.system(command)
     print("lpr -P " + printer + " -o raw < " + label)
+    # cmd = "lpr -P " + printer + " -o raw < " + label
+    # os.system(cmd)
 
 
 def main():
