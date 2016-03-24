@@ -90,11 +90,12 @@ def printLabel():
     label = """N
 q406
 D7
-A20,25,0,1,1,1,N,"Part-# {pn}"
-A20,50,0,1,1,1,N,"{pd}"
-B20,75,0,1,2,5,40,N,"{sn}"
-A20,120,0,1,1,1,N,"S/N {sn}"
-A20,145,0,1,1,1,N,"{lt}"
+S2
+A20,20,0,4,1,1,N,"Part-# {pn}"
+A20,50,0,2,1,1,N,"{pd}"
+B90,75,0,1,1,3,50,N,"{sn}"
+A90,135,0,1,1,1,N,"S/N {sn}"
+A50,155,0,4,1,1,N,"{lt}"
 P1
 """.format(pn=part_number, pd=part_description, sn=serial_number,
              lt=localtime)
@@ -105,9 +106,11 @@ P1
 
     cmd = "lpr -P " + printer + " -o raw " + epl_file
     os.system('cat /tmp/label.epl')
+    sleep(0.5)
     os.system(cmd)
 
     try:
+        sleep(1.5)
         os.remove(epl_file)
     except OSError:
         pass
