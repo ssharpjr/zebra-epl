@@ -50,7 +50,7 @@ The serial number is made of 3 variables:
     + Capture Errors?
 
 
-## Hardware Parts Lists and Notes:
+## Hardware Parts List and Notes:
 (*2 of everything.  2 workstations*)
 - Zebra ZT230 203dpi Label Printer (ribbon, 1x2 yellow labels [5400 labels/roll, 8 rolls/box])
 - Raspberry Pi B+ or RPI2?
@@ -113,8 +113,8 @@ sudo apt-get install -y build-essential python3-dev python3-smbus python3-pip gi
 git clone https://github.com/ssharpjr/zebra-epl.git
 
 # Get LCD Libraries
-git clone https://github.com/adafruit/Adafruit_Python_charLCD.git
-cd Adafruit_Python_charLCD
+git clone https://github.com/adafruit/Adafruit_Python_CharLCD.git
+cd Adafruit_Python_CharLCD
 # (Make the changes in LCD Library Notes before installing)
 sudo python3 setup.py install
 ```

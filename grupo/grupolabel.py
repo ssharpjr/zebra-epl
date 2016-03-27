@@ -98,7 +98,7 @@ A90,135,0,1,1,1,N,"S/N {sn}"
 A50,155,0,4,1,1,N,"{lt}"
 P1
 """.format(pn=part_number, pd=part_description, sn=serial_number,
-             lt=localtime)
+           lt=localtime)
 
     epl_file = '/tmp/label.epl'
     with open(epl_file, 'w') as f:
