@@ -151,13 +151,13 @@ P1
         f.write(rh_label)
 
     # Print labels
-    cmd = "lpr -P " + lh_printer + " -o raw " + lh_epl_file
-    cmd = "lpr -P " + rh_printer + " -o raw " + rh_epl_file
-    sleep(0.5)
-    os.system(cmd)
+    lh_cmd = "lpr -P " + lh_printer + " -o raw " + lh_epl_file
+    rh_cmd = "lpr -P " + rh_printer + " -o raw " + rh_epl_file
+    os.system(lh_cmd)
+    os.system(rh_cmd)
 
     try:
-        sleep(1.5)
+        # sleep(1.5)
         os.remove(lh_epl_file)
         os.remove(rh_epl_file)
     except OSError:
@@ -165,6 +165,7 @@ P1
 
 
 def main():
+    checkSwitch()
     setPrinter()
     printLabel()
 
