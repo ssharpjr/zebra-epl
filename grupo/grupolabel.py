@@ -168,12 +168,17 @@ P1
 
 
 def main():
-    while not btn_pin:
+    # Perform checks just once
+    # checkSwitch()
+
+    # Run loop
+    while True:
         print("Waiting for button press...")
-        # checkSwitch()
-        setPrinter()
-        print("Printing Label")
-        printLabel()
+        if (btn_pin):
+            setPrinter()
+            print("Printing Label")
+            printLabel()
+            print("Done.")
 
 
 def exit_program():
