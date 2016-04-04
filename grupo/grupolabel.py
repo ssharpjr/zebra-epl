@@ -10,20 +10,16 @@ import sys
 from subprocess import check_output, STDOUT
 
 from time import time, strftime, sleep
-# import RPi.GPIO as io
+import RPi.GPIO as io
 
-# TODO: Setup RTC
-# TODO: Setup LCD
+# [X]: Setup RTC
+# [ ]: Setup LCD
 
 # Sanity Checks
-# TODO: Verify the LCD is present (query the dev)
-# DONE: Verify the printer is present (lpstat -p)
-# TODO: Verify the switch is present (at least one input is on)
-# TODO: Verify the button is present (check the light?)
-
-# Assign RTC pins
-# rtc_clock_pin = ''
-# rtc_data_pin = ''
+# [ ]: Verify the LCD is present (query the dev)
+# [X]: Verify the printer is present (lpstat -p)
+# [ ]: Verify the switch is present (at least one input is on)
+# [ ]: Verify the button is present (check the light?)
 
 # Assign LCD pins
 # 4-6 pins here
@@ -34,28 +30,47 @@ sw_pos2_pin = 24
 sw_pos3_pin = 25
 
 # Setup GPIO, pull-down resistors (False)
-# io.setmode(io.BCM)
-# io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
-# io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
-# io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
+io.setmode(io.BCM)
+io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
 
 
 def checkSwitch():
-    pass
+    # Check if switch is present/working
+    sw = False
+    if (io.input(sw_pos1_pin)):
+        sw = True
+    elif (io.input(sw_pos2_pin)):
+        sw = True
+    elif (io.input(sw_pos3_pin)):
+        sw = True
+
+    if sw:
+        print("Switch detected")
+    else:
+        print("Switch not detected!")
+        exit_program()
 
 
 # Assign Part Number based on switch position
-# def setPartNumber():
-#     if (io.input(sw_pos1_pin)):
-#         part_number = '403319PA'
-#         part_description = 'F15 ACS LID LH BSE WRN TRI BLK'
-#     elif (io.input(sw_pos2_pin)):
-#         part_number = 'partno2'
-#         part_description = 'partdesc2'
-#     elif (io.input(sw_pos3_pin)):
-#         part_number = 'partno3'
-#         part_description = 'partdesc3'
-#     return part_number, part_description
+def setPartNumber():
+    if (io.input(sw_pos1_pin)):
+        lh_pn = '12345LH'
+        lh_pd = 'LH PART NUMBER 1'
+        rh_pn = '12345RH'
+        rh_pd = 'RH PART NUMBER 2'
+    elif (io.input(sw_pos2_pin)):
+        lh_pn = '23456LH'
+        lh_pd = 'LH PART NUMBER 2'
+        rh_pn = '23456RH'
+        rh_pd = 'RH PART NUMBER 2'
+    elif (io.input(sw_pos3_pin)):
+        lh_pn = '34567LH'
+        lh_pd = 'LH PART NUMBER 3'
+        rh_pn = '34567RH'
+        rh_pd = 'RH PART NUMBER 3'
+    return lh_pn, lh_pd, rh_pn, rh_pd
 
 
 # Defaults for testing
@@ -71,7 +86,7 @@ def setPrinter():
     if not len(lh_printer) > 0:
         print("ZT230-LH Label Printer not found!")
         # lcdError("Err: Left Hand\n Printer Missing")
-        exitProgram()
+        exit_program()
     else:
         lh_printer = 'ZT230-LH'
 
@@ -80,7 +95,7 @@ def setPrinter():
     if not len(rh_printer) > 0:
         print("ZT230-RH Label Printer not found!")
         # lcdError("Err: Right Hand\n Printer Missing")
-        exitProgram()
+        exit_program()
     else:
         rh_printer = 'ZT230-RH'
     return lh_printer, rh_printer
@@ -102,12 +117,12 @@ def printLabel():
     # Create LH label
     lh_label = """N
 q406
-D5
+D7
 S2
 A20,20,0,4,1,1,N,"Part-# {pn}"
 A20,50,0,2,1,1,N,"{pd}"
-B90,75,0,1,1,3,50,N,"{sn}"
-A90,135,0,1,1,1,N,"S/N {sn}"
+B90,75,0,1,1,3,60,N,"{sn}"
+A90,140,0,1,1,1,N,"S/N {sn}"
 A50,155,0,4,1,1,N,"{lt}"
 P1
 """.format(pn=lh_pn, pd=lh_pd, sn=lh_sn,
@@ -124,8 +139,8 @@ D5
 S2
 A20,20,0,4,1,1,N,"Part-# {pn}"
 A20,50,0,2,1,1,N,"{pd}"
-B90,75,0,1,1,3,50,N,"{sn}"
-A90,135,0,1,1,1,N,"S/N {sn}"
+B90,75,0,1,1,3,60,N,"{sn}"
+A90,140,0,1,1,1,N,"S/N {sn}"
 A50,155,0,4,1,1,N,"{lt}"
 P1
 """.format(pn=rh_pn, pd=rh_pd, sn=rh_sn,
@@ -154,7 +169,7 @@ def main():
     printLabel()
 
 
-def exitProgram():
+def exit_program():
     print("Exiting")
     # io.cleanup()  # Clean up GPIO
     sys.exit()
