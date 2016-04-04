@@ -168,7 +168,7 @@ P1
 
 
 def main():
-    while btn_pin:
+    while not btn_pin:
         print("Waiting for button press...")
         # checkSwitch()
         setPrinter()
