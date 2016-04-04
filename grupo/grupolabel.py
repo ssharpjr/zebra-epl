@@ -173,8 +173,7 @@ def main():
 
     # Run loop
     while True:
-        print("Waiting for button press...")
-        if (btn_pin):
+        if not (btn_pin):
             setPrinter()
             print("Printing Label")
             printLabel()
