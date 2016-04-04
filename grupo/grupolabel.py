@@ -59,37 +59,50 @@ def checkSwitch():
 
 
 # Defaults for testing
-part_number = '403319PA'
-part_description = 'F15 ACS LID LH BSE WRN TRI BLK'
+lh_pn = '24680LH'
+lh_pd = 'LH PART NUMBER'
+rh_pn = '24680RH'
+rh_pd = 'RH PART NUMBER'
 
 
 def setPrinter():
-    p = check_output("lpstat -p | grep ZT230; exit 0",
-                     stderr=STDOUT, shell=True)
-    if not len(p) > 0:
-        print("ZT230 Label Printer not found!")
-        # lcdError("Error: No Printer")
+    lh_printer = check_output("lpstat -p | grep ZT230-LH; exit 0",
+                              stderr=STDOUT, shell=True)
+    if not len(lh_printer) > 0:
+        print("ZT230-LH Label Printer not found!")
+        # lcdError("Err: Left Hand\n Printer Missing")
         exitProgram()
     else:
-        printer = 'ZT230'
-    return printer
+        lh_printer = 'ZT230-LH'
+
+    rh_printer = check_output("lpstat -p | grep ZT230-RH; exit 0",
+                              stderr=STDOUT, shell=True)
+    if not len(rh_printer) > 0:
+        print("ZT230-RH Label Printer not found!")
+        # lcdError("Err: Right Hand\n Printer Missing")
+        exitProgram()
+    else:
+        rh_printer = 'ZT230-RH'
+    return lh_printer, rh_printer
 
 
-def setSerialNumberTime(part_number):
+def setSerialNumberTime(pn):
     curtime = time()
     hexstr = str(hex(int(curtime))).upper()[-8:]
     localtime = strftime('%m/%d/%Y %H:%M:%S')
-    serial_number = hexstr + 'P' + part_number
-    return serial_number, localtime
+    sn = hexstr + 'P' + pn
+    return sn, localtime
 
 
 def printLabel():
-    printer = setPrinter()  # Testing
-    # printer = 'ZT230'
-    serial_number, localtime = setSerialNumberTime(part_number)
-    label = """N
+    lh_printer, rh_printer = setPrinter()
+    lh_sn, localtime = setSerialNumberTime(lh_pn)
+    rh_sn, localtime = setSerialNumberTime(rh_pn)
+
+    # Create LH label
+    lh_label = """N
 q406
-D7
+D5
 S2
 A20,20,0,4,1,1,N,"Part-# {pn}"
 A20,50,0,2,1,1,N,"{pd}"
@@ -97,27 +110,47 @@ B90,75,0,1,1,3,50,N,"{sn}"
 A90,135,0,1,1,1,N,"S/N {sn}"
 A50,155,0,4,1,1,N,"{lt}"
 P1
-""".format(pn=part_number, pd=part_description, sn=serial_number,
+""".format(pn=lh_pn, pd=lh_pd, sn=lh_sn,
            lt=localtime)
 
-    epl_file = '/tmp/label.epl'
-    with open(epl_file, 'w') as f:
-        f.write(label)
+    lh_epl_file = '/tmp/lh_label.epl'
+    with open(lh_epl_file, 'w') as f:
+        f.write(lh_label)
 
-    cmd = "lpr -P " + printer + " -o raw " + epl_file
-    os.system('cat /tmp/label.epl')
+    # Create RH label
+    rh_label = """N
+q406
+D5
+S2
+A20,20,0,4,1,1,N,"Part-# {pn}"
+A20,50,0,2,1,1,N,"{pd}"
+B90,75,0,1,1,3,50,N,"{sn}"
+A90,135,0,1,1,1,N,"S/N {sn}"
+A50,155,0,4,1,1,N,"{lt}"
+P1
+""".format(pn=rh_pn, pd=rh_pd, sn=rh_sn,
+           lt=localtime)
+
+    rh_epl_file = '/tmp/rh_label.epl'
+    with open(rh_epl_file, 'w') as f:
+        f.write(rh_label)
+
+    # Print labels
+    cmd = "lpr -P " + lh_printer + " -o raw " + lh_epl_file
+    cmd = "lpr -P " + rh_printer + " -o raw " + rh_epl_file
     sleep(0.5)
     os.system(cmd)
 
     try:
         sleep(1.5)
-        os.remove(epl_file)
+        os.remove(lh_epl_file)
+        os.remove(rh_epl_file)
     except OSError:
         pass
 
 
 def main():
-    # setPrinter()
+    setPrinter()
     printLabel()
 
 
