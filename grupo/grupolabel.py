@@ -16,21 +16,24 @@ import RPi.GPIO as io
 # [ ]: Setup LCD
 
 # Sanity Checks
+# [ ]: Verify the RTC is present (query the dev)
 # [ ]: Verify the LCD is present (query the dev)
 # [X]: Verify the printer is present (lpstat -p)
-# [ ]: Verify the switch is present (at least one input is on)
+# [X]: Verify the switch is present (at least one input is on)
 # [ ]: Verify the button is present (check the light?)
 
 # Assign LCD pins
 # 4-6 pins here
 
-# Assign switch pins
+# Assign button and switch pins
+btn_pin = 16
 sw_pos1_pin = 23
 sw_pos2_pin = 24
 sw_pos3_pin = 25
 
 # Setup GPIO, pull-down resistors (False)
 io.setmode(io.BCM)
+io.setup(btn_pin, io.IN, pull_up_down=io.PUD_DOWN)
 io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
 io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
 io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
@@ -157,7 +160,7 @@ P1
     os.system(rh_cmd)
 
     try:
-        # sleep(1.5)
+        sleep(1)
         os.remove(lh_epl_file)
         os.remove(rh_epl_file)
     except OSError:
@@ -165,9 +168,12 @@ P1
 
 
 def main():
-    checkSwitch()
-    setPrinter()
-    printLabel()
+    while btn_pin:
+        print("Waiting for button press...")
+        # checkSwitch()
+        setPrinter()
+        print("Printing Label")
+        printLabel()
 
 
 def exit_program():
