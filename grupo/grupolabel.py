@@ -1,9 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-# grupolabel.py - Print a label when a button is pushed
-# Author: Stacey Sharp (github.com/ssharpjr)
-# Version: 2016-03-22
 
 import os
 import sys
@@ -34,19 +30,19 @@ sw_pos3_pin = 25
 # Setup GPIO, pull-down resistors (False)
 io.setmode(io.BCM)
 io.setup(btn_pin, io.IN, pull_up_down=io.PUD_DOWN)
-io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
-io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
-io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_UP)
+io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_UP)
+io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_UP)
 
 
 def checkSwitch():
     # Check if switch is present/working
     sw = False
-    if (io.input(sw_pos1_pin)):
+    if not (io.input(sw_pos1_pin)):
         sw = True
-    elif (io.input(sw_pos2_pin)):
+    elif not (io.input(sw_pos2_pin)):
         sw = True
-    elif (io.input(sw_pos3_pin)):
+    elif not (io.input(sw_pos3_pin)):
         sw = True
 
     if sw:
@@ -71,21 +67,25 @@ def setPartNumber():
     rh_pd = 'RH PART NUMBER'
     #############################
 
-    if (io.input(sw_pos1_pin)):
+    if not (io.input(sw_pos1_pin)):
         lh_pn = '12345LH'
         lh_pd = 'LH PART NUMBER 1'
         rh_pn = '12345RH'
-        rh_pd = 'RH PART NUMBER 2'
-    elif (io.input(sw_pos2_pin)):
+        rh_pd = 'RH PART NUMBER 1'
+    elif not (io.input(sw_pos2_pin)):
         lh_pn = '23456LH'
         lh_pd = 'LH PART NUMBER 2'
         rh_pn = '23456RH'
         rh_pd = 'RH PART NUMBER 2'
-    elif (io.input(sw_pos3_pin)):
+    elif not (io.input(sw_pos3_pin)):
         lh_pn = '34567LH'
         lh_pd = 'LH PART NUMBER 3'
         rh_pn = '34567RH'
         rh_pd = 'RH PART NUMBER 3'
+
+    print("Selected Parts:")
+    print(lh_pn, lh_pd)
+    print(rh_pn, rh_pd)
     return lh_pn, lh_pd, rh_pn, rh_pd
 
 
@@ -107,6 +107,9 @@ def setPrinter():
         exit_program()
     else:
         rh_printer = 'ZT230-RH'
+
+    print("Printers:")
+    print(lh_printer, rh_printer)
     return lh_printer, rh_printer
 
 
@@ -181,23 +184,23 @@ def exit_program():
     sys.exit()
 
 
-def test_button(channel):
-    print("Printing  :")
-
-
 def main():
     # Perform checks on startup
-    # checkSwitch()
+    checkSwitch()
     setPrinter()
     setPartNumber()
 
-    io.add_event_detect(btn_pin, io.FALLING,
-                        callback=test_button,
-                        bouncetime=300)
-
+    print("Started")
     while True:
-        print("Waiting for button")
+        try:
+            print("Waiting for button")
+            io.wait_for_edge(btn_pin, io.FALLING, bouncetime=300)
+            print("Printing")
+            printLabel()
+        except KeyboardInterrupt:
+            exit_program()
 
 
 if __name__ == '__main__':
     main()
+
