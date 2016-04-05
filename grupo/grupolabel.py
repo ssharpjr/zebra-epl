@@ -56,8 +56,21 @@ def checkSwitch():
         exit_program()
 
 
-# Assign Part Number based on switch position
 def setPartNumber():
+    # Assign Part Number based on switch position
+    lh_pn = ''
+    lh_pd = ''
+    rh_pn = ''
+    rh_pd = ''
+
+    #############################
+    # Defaults for testing
+    lh_pn = '24680LH'
+    lh_pd = 'LH PART NUMBER'
+    rh_pn = '24680RH'
+    rh_pd = 'RH PART NUMBER'
+    #############################
+
     if (io.input(sw_pos1_pin)):
         lh_pn = '12345LH'
         lh_pd = 'LH PART NUMBER 1'
@@ -74,13 +87,6 @@ def setPartNumber():
         rh_pn = '34567RH'
         rh_pd = 'RH PART NUMBER 3'
     return lh_pn, lh_pd, rh_pn, rh_pd
-
-
-# Defaults for testing
-lh_pn = '24680LH'
-lh_pd = 'LH PART NUMBER'
-rh_pn = '24680RH'
-rh_pd = 'RH PART NUMBER'
 
 
 def setPrinter():
@@ -114,10 +120,12 @@ def setSerialNumberTime(pn):
 
 def printLabel():
     lh_printer, rh_printer = setPrinter()
+    lh_pn, lh_pd, rh_pn, rh_pd = setPartNumber()
     lh_sn, localtime = setSerialNumberTime(lh_pn)
     rh_sn, localtime = setSerialNumberTime(rh_pn)
 
     # Create LH label
+    # TODO: Refactor: DRY?
     lh_label = """N
 q406
 D7
@@ -167,23 +175,28 @@ P1
         pass
 
 
-def main():
-    # Perform checks just once
-    # checkSwitch()
-
-    # Run loop
-    while True:
-        if not (btn_pin):
-            setPrinter()
-            print("Printing Label")
-            printLabel()
-            print("Done.")
-
-
 def exit_program():
     print("Exiting")
-    # io.cleanup()  # Clean up GPIO
+    io.cleanup()
     sys.exit()
+
+
+def test_button(channel):
+    print("Printing  :")
+
+
+def main():
+    # Perform checks on startup
+    # checkSwitch()
+    setPrinter()
+    setPartNumber()
+
+    io.add_event_detect(btn_pin, io.FALLING,
+                        callback=test_button,
+                        bouncetime=300)
+
+    while True:
+        print("Waiting for button")
 
 
 if __name__ == '__main__':

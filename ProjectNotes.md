@@ -7,17 +7,17 @@ Print a 1" X 2" barcode label with the press of a button.
 
 ## Solution:
 A mini-computer connected to a label printer that is capable to producing a label when a button is pressed.  
-There will be 2 workstations setup with a computer (with button & switch) and printer each.  
+There will be 1 workstation setup with a computer (with button & switch) and printer.  
 One left hand part and one right hand part.
 
 
 ## Steps:
 - Select the part with a 3-position switch.
-- Press a button to print a label for the select part.
+- Press a button to print a label for the select parts (LH/RH).
 
 
 ## Thought Process:
-There are 2 workstations each making 3 parts (colors) for a total of 6 parts (3 left, 3 right).
+One workstation making 6 parts (3 left, 3 right).
 The switch position determines the part number that will be printed.
 A display will show what part is currently selected and the current date and time.
 When the button is pushed, the part number, date and time, and a serial number are printed on a 1" X 2" label.
@@ -51,9 +51,8 @@ The serial number is made of 3 variables:
 
 
 ## Hardware Parts List and Notes:
-(*2 of everything.  2 workstations*)
-- Zebra ZT230 203dpi Label Printer (ribbon, 1x2 yellow labels [5400 labels/roll, 8 rolls/box])
-- Raspberry Pi B+ or RPI2?
+- 2 - Zebra ZT230 203dpi Label Printer (ribbon, 1x2 yellow labels [5400 labels/roll, 8 rolls/box])
+- Raspberry Pi 2
 - 8GB Micro SD Card (or 4GB)
 - USB Wireless Adapter (for remote access)
 - Real Time Clock (RTC) Circuit
@@ -61,10 +60,10 @@ The serial number is made of 3 variables:
 - 3-Position Cam Switch
 - 60mm White Backlit Button
 - Enclosure (purchased and modified or custom 3D printed)?
-- USB A-B Cable for Printer
+- 2 - USB A-B Cable for Printer
 - Power Cable for RPI (USB vs Barrel)?
-- Button Cable (Stereo Plug)?
-- Cam Switch Cable (Stereo Plug)?
+- Button Cable (Stereo Plug or CAT5)?
+- Cam Switch Cable (Stereo Plug or CAT5)?
 
 
 ## Software Logic and Notes:
@@ -73,6 +72,9 @@ The serial number is made of 3 variables:
 ##### System is Idle:
 - Static variables are assigned to the switch position inputs.  The selected input's variable is assigned to the current part/desc variables.
 - Program waits for the button to be pressed.
+- GPIO interrupts:
+    + Add event detect for the 3 switch pins.
+    + Wait for falling edge for the button.
 
 ##### Button is Pressed:
 - The date/time is captured from the RTC circuit and assigned to the current time variable.
@@ -84,7 +86,7 @@ The serial number is made of 3 variables:
 - The program pauses 1 second.
 - Program returns to Idle status.
 
-##### Sanity Checks (on boot):
+##### Sanity Checks (on startup):
 - Check if RTC is connected.
 - Check if LCD is connected.
 - Check if Label Printer is connected.
@@ -118,11 +120,11 @@ cd Adafruit_Python_CharLCD
 # (Make the changes in LCD Library Notes before installing)
 sudo python3 setup.py install
 ```
-**Setup CUPS and ZT230 Printer**  
+**Setup CUPS and ZT230 Printers**  
 Instructions on 
 [HowToGeek.com](http://www.howtogeek.com/169679/how-to-add-a-printer-to-your-raspberry-pi-or-other-linux-computer/)  
-- Printer Name = ZT230
-- Printer Description = ZT230 RAW Printer
+- Printer Names = ZT230-LH, ZT230-RH
+- Printer Description = LH(RH) ZT230 RAW Printer
 - Make/Manufacturer = Raw
 - Model = Raw Queue (en)
 - Set as the Server Default Printer
@@ -140,8 +142,8 @@ Update this file **BEFORE** running setup.py:
 
 ## RPI GPIO Pins Used
 - LCD = 6 pins
-- Button = 1 pin
-- Cam Switch = 3 pins
+- Button = 1 pin (pulled down)
+- Cam Switch = 3 pins (pulled down)
 
 
 ## Unanswered Questions:
