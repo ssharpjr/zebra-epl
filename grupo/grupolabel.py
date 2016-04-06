@@ -47,9 +47,9 @@ def checkSwitch():
         sw = True
 
     if sw:
-        print("Switch detected")
+        print("\nSwitch detected")
     else:
-        print("Switch not detected!")
+        print("\nSwitch not detected!")
         exit_program()
 
 
@@ -62,11 +62,13 @@ def setPos():
         pos = 3
     elif (io.input(sw_pos2_pin)):
         pos = 2
-    print("Pos: %s" % pos)
+    # print("Pos: %s" % pos)
     return pos
 
 
-def sw_callback():
+def sw_callback(channel):
+    # When the switch changes, update the part numbers
+    print("\nPart Number Changed\n")
     setPartNumber()
 
 
@@ -82,10 +84,10 @@ def setPartNumber():
 
     #############################
     # Defaults for testing
-    lh_pn = '24680LH'
-    lh_pd = 'LH PART NUMBER'
-    rh_pn = '24680RH'
-    rh_pd = 'RH PART NUMBER'
+    # lh_pn = '24680LH'
+    # lh_pd = 'LH PART NUMBER'
+    # rh_pn = '24680RH'
+    # rh_pd = 'RH PART NUMBER'
     #############################
 
     if pos == 1:
@@ -104,7 +106,7 @@ def setPartNumber():
         rh_pn = '34567RH'
         rh_pd = 'RH PART NUMBER 3'
 
-    print("Selected Parts:")
+    print("\nSelected Parts:")
     print(lh_pn, lh_pd)
     print(rh_pn, rh_pd)
     return lh_pn, lh_pd, rh_pn, rh_pd
@@ -129,7 +131,7 @@ def setPrinter():
     else:
         rh_printer = 'ZT230-RH'
 
-    print("Printers:")
+    print("\nConnected Printers:")
     print(lh_printer, rh_printer)
     return lh_printer, rh_printer
 
@@ -186,6 +188,12 @@ P1
         f.write(rh_label)
 
     # Print labels
+    print("\n##############################")
+    print("Printing Part Numbers:")
+    print(lh_pn, lh_pd)
+    print(rh_pn, rh_pd)
+    print(localtime)
+    print("##############################\n")
     lh_cmd = "lpr -P " + lh_printer + " -o raw " + lh_epl_file
     rh_cmd = "lpr -P " + rh_printer + " -o raw " + rh_epl_file
     os.system(lh_cmd)
@@ -200,36 +208,40 @@ P1
 
 
 def exit_program():
-    print("Exiting")
+    print("\nExiting")
     io.cleanup()
     sys.exit()
 
 
 def main():
     # Perform checks on startup
+    print("\n##############################")
+    print("Starting Up...\n")
     checkSwitch()
     setPrinter()
     setPartNumber()
+    print("##############################\n")
 
     # Create switch events
     io.add_event_detect(sw_pos1_pin, io.BOTH,
                         callback=sw_callback,
-                        bouncetime=50)
+                        bouncetime=100)
     io.add_event_detect(sw_pos2_pin, io.BOTH,
                         callback=sw_callback,
-                        bouncetime=50)
+                        bouncetime=100)
     io.add_event_detect(sw_pos3_pin, io.BOTH,
                         callback=sw_callback,
-                        bouncetime=50)
+                        bouncetime=100)
 
-    print("Started")
+    print("Startup Complete")
     while True:
         try:
-            print("Waiting for button")
+            print("\nWaiting for Print Button")
             io.wait_for_edge(btn_pin, io.FALLING, bouncetime=300)
-            print("Printing")
+            print("Button Pressed")
             printLabel()
         except KeyboardInterrupt:
+            io.cleanup()
             exit_program()
 
 
