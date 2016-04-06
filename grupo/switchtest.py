@@ -21,7 +21,7 @@ io.setup(sw3, io.IN, pull_up_down=io.PUD_UP)
 while True:
 
     # Get switch state
-    if sw1 and sw3:
+    if sw1 and sw2:
         pos = 1
     elif sw2:
         pos = 2
