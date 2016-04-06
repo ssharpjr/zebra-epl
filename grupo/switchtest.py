@@ -4,6 +4,7 @@
 # 3 Position ON-ON-ON DPDT Switch.
 # Switch poles 1, 3, and 5 are on in position 1.
 
+import sys
 import RPi.GPIO as io
 
 
@@ -13,19 +14,26 @@ sw2 = 24
 sw3 = 25
 
 io.setmode(io.BCM)
-io.setup(sw1, io.IN, pull_up_down=io.PUD_UP)
-io.setup(sw2, io.IN, pull_up_down=io.PUD_UP)
-io.setup(sw3, io.IN, pull_up_down=io.PUD_UP)
+io.setup(sw1, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw2, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw3, io.IN, pull_up_down=io.PUD_DOWN)
 
 
 while True:
 
     # Get switch state
-    if sw1 and sw2:
+    pos = ''
+    if (io.input(sw1) and io.input(sw2)):
         pos = 1
-    elif sw2:
-        pos = 2
-    elif sw3:
+    elif (io.input(sw3)):
         pos = 3
+    elif (io.input(sw2)):
+        pos = 2
 
-    print("The switch is in position: " + str(pos))
+    if not pos:
+        print("Switch not detected")
+        io.cleanup()
+        sys.exit()
+    else:
+        print("pos: " + str(pos))
+
