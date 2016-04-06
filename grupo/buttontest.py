@@ -4,10 +4,10 @@ import RPi.GPIO as io
 
 io.setmode(io.BCM)
 
-# Button wired from 3V3 to Pin.
+# Button wired from 3V3 to Pin.  Default state = True.
 io.setup(16, io.IN, pull_up_down=io.PUD_DOWN)
 
-# Button wired from Pin to GND.
+# Button wired from Pin to GND.  Default state = False.
 io.setup(17, io.IN, pull_up_down=io.PUD_UP)
 
 
