@@ -42,7 +42,7 @@ def my_callback(channel):
 pos = setPos()
 print("Pos: %s" % pos)
 
-    
+
 io.add_event_detect(sw1, io.BOTH, callback=my_callback, bouncetime=50)
 io.add_event_detect(sw2, io.BOTH, callback=my_callback, bouncetime=50)
 io.add_event_detect(sw3, io.BOTH, callback=my_callback, bouncetime=50)
@@ -50,4 +50,3 @@ io.add_event_detect(sw3, io.BOTH, callback=my_callback, bouncetime=50)
 
 while True:
     pass
-    

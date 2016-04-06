@@ -27,16 +27,17 @@ sw_pos1_pin = 23
 sw_pos2_pin = 24
 sw_pos3_pin = 25
 
-# Setup GPIO, pull-down resistors (False)
+# Setup GPIO, pull-down resistors from 3V3 (False by default)
 io.setmode(io.BCM)
 io.setup(btn_pin, io.IN, pull_up_down=io.PUD_DOWN)
-io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_UP)
-io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_UP)
-io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_UP)
+io.setup(sw_pos1_pin, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw_pos2_pin, io.IN, pull_up_down=io.PUD_DOWN)
+io.setup(sw_pos3_pin, io.IN, pull_up_down=io.PUD_DOWN)
 
 
 def checkSwitch():
-    # Check if switch is present/working
+    # Check if switch is connected.
+    # At least one position should True.
     sw = False
     if not (io.input(sw_pos1_pin)):
         sw = True
@@ -52,7 +53,27 @@ def checkSwitch():
         exit_program()
 
 
+def setPos():
+    # Get switch position
+    pos = ''
+    if (io.input(sw_pos1_pin) and io.input(sw_pos2_pin)):
+        pos = 1
+    elif (io.input(sw_pos3_pin)):
+        pos = 3
+    elif (io.input(sw_pos2_pin)):
+        pos = 2
+    print("Pos: %s" % pos)
+    return pos
+
+
+def sw_callback():
+    setPartNumber()
+
+
 def setPartNumber():
+    # Get current switch position
+    pos = setPos()
+
     # Assign Part Number based on switch position
     lh_pn = ''
     lh_pd = ''
@@ -67,17 +88,17 @@ def setPartNumber():
     rh_pd = 'RH PART NUMBER'
     #############################
 
-    if not (io.input(sw_pos1_pin)):
+    if pos == 1:
         lh_pn = '12345LH'
         lh_pd = 'LH PART NUMBER 1'
         rh_pn = '12345RH'
         rh_pd = 'RH PART NUMBER 1'
-    elif not (io.input(sw_pos2_pin)):
+    elif pos == 2:
         lh_pn = '23456LH'
         lh_pd = 'LH PART NUMBER 2'
         rh_pn = '23456RH'
         rh_pd = 'RH PART NUMBER 2'
-    elif not (io.input(sw_pos3_pin)):
+    elif pos == 3:
         lh_pn = '34567LH'
         lh_pd = 'LH PART NUMBER 3'
         rh_pn = '34567RH'
@@ -189,6 +210,17 @@ def main():
     checkSwitch()
     setPrinter()
     setPartNumber()
+
+    # Create switch events
+    io.add_event_detect(sw_pos1_pin, io.BOTH,
+                        callback=sw_callback,
+                        bouncetime=50)
+    io.add_event_detect(sw_pos2_pin, io.BOTH,
+                        callback=sw_callback,
+                        bouncetime=50)
+    io.add_event_detect(sw_pos3_pin, io.BOTH,
+                        callback=sw_callback,
+                        bouncetime=50)
 
     print("Started")
     while True:
