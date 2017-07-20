@@ -8,6 +8,10 @@ from subprocess import check_output, STDOUT
 from time import time, strftime, sleep
 import RPi.GPIO as io
 
+# DEBUG Mode Settings
+DEBUG = ''
+
+
 # [X]: Setup RTC
 # [ ]: Setup LCD
 
@@ -20,6 +24,8 @@ import RPi.GPIO as io
 
 # Assign LCD pins
 # 4-6 pins here
+HAS_LCD = False
+
 
 # Assign button and switch pins
 btn_pin = 16
@@ -50,6 +56,13 @@ def checkSwitch():
         print("\nSwitch detected")
     else:
         print("\nSwitch not detected!")
+        if HAS_LCD:
+            lcd.clear()
+            lcd.set_color(1,0,0)
+            lcd.set_cursor(0,0)
+            lcd.message("Switch Not Detected!")
+            lcd.set_cursor(1,0)
+            lcd.message("Exiting")
         exit_program()
 
 

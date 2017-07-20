@@ -109,7 +109,7 @@ The serial number is made of 3 variables:
 ```shell
 # Install Packages
 sudo apt-get update
-sudo apt-get install -y build-essential python3-dev python3-smbus python3-pip git cups rpi-update
+sudo apt-get install -y build-essential python3-dev python3-smbus python3-pip git lpr cups rpi-update
 
 # Get Label Software
 git clone https://github.com/ssharpjr/zebra-epl.git
