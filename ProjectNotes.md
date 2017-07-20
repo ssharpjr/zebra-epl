@@ -1,4 +1,4 @@
-# Project:  Grupo Part Label Project
+# Project:  Part Label Project
 
 
 ## Purpose:
